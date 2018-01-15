@@ -20,7 +20,7 @@ public enum ServiceType {
         
         switch (st){
             case DOM:
-                sb.append("Domestico Clientes ");
+                sb.append("Domestico Clientes");
                 break;
             case IMPO:
                 sb.append("Impo Clientes");
@@ -41,18 +41,34 @@ public enum ServiceType {
         
         switch (st){
             case DOM:
-                sb.append("\\Domestico");
+                sb.append("\\Domestico ");
                 break;
             case IMPO:
-                sb.append("\\Impo");
+                sb.append("\\Impo ");
                 break;
             case EXPO:
-                sb.append("\\Expo");
+                sb.append("\\Expo ");
                 break;
-        }                
+        }            
+        
         return sb.toString();
                 
         
+    }
+    
+    public static String getName(ServiceType st){
+        switch (st){
+            case DOM:
+                return "Domestico";
+                
+            case IMPO:
+                return "Importacion";
+                
+            case EXPO:
+                return "Exportacion";
+                
+        }
+        return "";
     }
     
     

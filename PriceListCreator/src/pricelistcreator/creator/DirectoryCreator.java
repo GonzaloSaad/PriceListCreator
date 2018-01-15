@@ -26,12 +26,12 @@ import pricelistcreator.common.LogToSOUT;
  */
 public class DirectoryCreator {
 
-    private File BASE_DIRECTORY;
+    
     private File OUTPUT_DIRECTORY;
     private File DESTINY_FILE;
 
     public DirectoryCreator(File directory, File prices, int amount, boolean needsIndividuals, ServiceType servType) throws DirectoryNotCreatedException, IOException {
-        LogToSOUT.log("DirectoryCreator");
+        
         createBaseDirectory(directory, servType);
         createFilesInOutput(prices, needsIndividuals, amount, servType);
     }
@@ -39,9 +39,12 @@ public class DirectoryCreator {
    
 
     private void createBaseDirectory(File rootFolder, ServiceType st) throws DirectoryNotCreatedException {
-        LogToSOUT.log("\tCreating Final Directory...");
-        String path = rootFolder.getAbsolutePath() + "\\Tarifas " + CommonTime.getYear();
-        LogToSOUT.log("\t\tPath[" + path + "]");
+       
+        String path = rootFolder.getAbsolutePath() + ServiceType.getServicePath(st)+CommonTime.getYear();
+        
+        
+        
+       
 
         int i = 0;
         String alt = "";
@@ -50,20 +53,19 @@ public class DirectoryCreator {
             if (i > 0) {
                 alt = "-" + Integer.toString(i);
             }
-            BASE_DIRECTORY = new File(path + alt);
+            OUTPUT_DIRECTORY = new File(path + alt);
             i++;
-        } while (BASE_DIRECTORY.exists());
+        } while (OUTPUT_DIRECTORY.exists());
 
-        OUTPUT_DIRECTORY = new File(BASE_DIRECTORY.getAbsolutePath() + ServiceType.getServicePath(st));
+         
 
         try {
-            BASE_DIRECTORY.mkdir();
-            LogToSOUT.log("\t\tBase directory Created.");
             OUTPUT_DIRECTORY.mkdir();
-            LogToSOUT.log("\t\tOutput Directory Created.");
-            LogToSOUT.log("\tFinish");
+            
+            OUTPUT_DIRECTORY.mkdir();
+            
         } catch (SecurityException se) {
-            LogToSOUT.log("\t\t" + se.getMessage());
+            
             throw new DirectoryNotCreatedException(se.getMessage());
         }
 
@@ -71,24 +73,24 @@ public class DirectoryCreator {
 
     private void createFilesInOutput(File prices, boolean needsIndividuals, int amount, ServiceType st) throws IOException {
 
-        LogToSOUT.log("\tCreating Files in Output...");
+       
         
-        DESTINY_FILE = new File(OUTPUT_DIRECTORY.getAbsolutePath() + ServiceType.getServicePath(st) + " Clientes " + CommonTime.getYear() + ".xlsx");
+        DESTINY_FILE = new File(OUTPUT_DIRECTORY.getAbsolutePath() + ServiceType.getServicePath(st) + "Clientes " + CommonTime.getYear() + ".xlsx");
         try {
-            LogToSOUT.log("\t\tCopy price file.");
+            
             Files.copy(prices.toPath(), DESTINY_FILE.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
         } catch (IOException ex) {
-            LogToSOUT.log("\t\t" + ex.getMessage());
+            
             Logger.getLogger(DirectoryCreator.class.getName()).log(Level.SEVERE, null, ex);
             throw ex;
         }
 
         if (needsIndividuals) {
-            LogToSOUT.log("\t\tCopy individuals files.");
+            
 
             for (int i = 0; i < amount; i++) {
-                LogToSOUT.log("\t\t\tFile " + (i + 1));
+                
                 File output = new File(OUTPUT_DIRECTORY + "\\" + (i + 1) + ".xlsx");
 
                 InputStream source;
@@ -113,13 +115,11 @@ public class DirectoryCreator {
 
         }
 
-        LogToSOUT.log("\tFinish");
+       
 
     }
 
-    public File getBaseDir() {
-        return BASE_DIRECTORY;
-    }
+    
 
     public File getOuputDir() {
         return OUTPUT_DIRECTORY;

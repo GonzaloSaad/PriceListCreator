@@ -15,28 +15,28 @@ import pricelistcreator.excel.writter.DomesticExcelWritter;
  *
  * @author Gonzalo
  */
-public class DomesticOutputCreator extends OutputCreator {
+public class DomesticOutputCreator  {
 
     private File READ_FILE;
     private File WRITE_FILE;
     private File BASE_FOLDER;
-    private double[] FIXS;
+    
     private double[] PERCENTAGES;
 
     public DomesticOutputCreator() {
 
     }
 
-    @Override
-    public void setCreator(File read, File write,File baseFolder, double[] fixes, double[] percentages) {
+    
+    public void setCreator(File read, File write,File baseFolder, double[] percentages) {
         READ_FILE = read;
         WRITE_FILE = write;
         BASE_FOLDER = baseFolder;
-        FIXS = fixes;
+       
         PERCENTAGES = percentages;
     }
 
-    @Override
+    
     public void write(boolean individuals) throws IOException {
         
         
@@ -47,9 +47,9 @@ public class DomesticOutputCreator extends OutputCreator {
 
         DomesticExcelWritter dew = new DomesticExcelWritter(WRITE_FILE);
 
-        for (int i = 0; i < FIXS.length; i++) {
+        for (int i = 0; i < PERCENTAGES.length; i++) {
 
-            DomesticBuilder db = new DomesticBuilder(base, adderBase, FIXS[i], PERCENTAGES[i]);
+            DomesticBuilder db = new DomesticBuilder(base, adderBase, PERCENTAGES[i]);
             double[][] price = db.getPrice();
             double[][] adder = db.getAdders();
             double[][] priceProfit = db.getPriceProfit();

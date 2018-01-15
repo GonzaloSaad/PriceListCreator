@@ -43,12 +43,12 @@ public class ExpoImpoExcelReader {
 
     public ExpoImpoExcelReader(File input) throws IOException {
         try {
-            System.out.println("ExpoImpoExcelReader.");
-            System.out.println("\tReading...");
+            
+           
             WORK_BOOK = new XSSFWorkbook(new FileInputStream(input));
-            System.out.println("\tInit - [" + CommonTime.getTime() + "]");
+           
         } catch (IOException ex) {
-            System.out.println("\tIOException!!!");
+            
             Logger.getLogger(ExpoImpoExcelReader.class.getName()).log(Level.SEVERE, null, ex);
             throw ex;
         }
@@ -63,11 +63,11 @@ public class ExpoImpoExcelReader {
         readNondocBase();
         readAdders();
         try {
-            System.out.println("\tClosing...");
+            
             close();
-            System.out.println("\tFinish - [" + CommonTime.getTime() + "]");
+            
         } catch (IOException ex) {
-            System.out.println("\tIOException!!!");
+           
             Logger.getLogger(ExpoImpoExcelReader.class.getName()).log(Level.SEVERE, null, ex);
             throw ex;
         }

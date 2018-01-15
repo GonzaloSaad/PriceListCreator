@@ -14,7 +14,9 @@ import java.io.IOException;
  */
 public abstract class OutputCreator {
 
-    public abstract void setCreator(File read, File write,File baseFolder, double[] fixes, double[] percentages);
+    public abstract void setCreator(File read, File write,File baseFolder,double [] docPercentages, double[] nonDocfixes, double[] nonDocPercentages);
+    
+     public abstract void setCreator(File read, File write,File baseFolder, double[] percentages);
 
     public abstract void write(boolean individuals) throws IOException;
 }

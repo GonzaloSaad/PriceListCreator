@@ -10,79 +10,85 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="811.0" prefWidth="713.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pricelistcreator.GUI.MainController">
+<AnchorPane id="AnchorPane" fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="571.0" prefWidth="969.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pricelistcreator.GUI.MainController">
     <children>
-      <ImageView fitHeight="190.0" fitWidth="254.0" layoutX="47.0" layoutY="67.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="69.0" fitWidth="117.0" layoutX="11.0" layoutY="495.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../../images/2072_logo.jpg" />
          </image>
       </ImageView>
-      <TextField fx:id="txb_readPath" layoutX="47.0" layoutY="324.0" prefHeight="41.0" prefWidth="303.0">
+      <TextField fx:id="txb_readPath" layoutX="261.0" layoutY="203.0" prefHeight="41.0" prefWidth="303.0">
          <font>
             <Font size="14.0" />
          </font>
       </TextField>
-      <Label layoutX="47.0" layoutY="297.0" prefHeight="17.0" prefWidth="83.0" text="Base:">
+      <Label layoutX="182.0" layoutY="210.0" prefHeight="27.0" prefWidth="45.0" text="Base:">
          <font>
             <Font size="18.0" />
          </font>
       </Label>
-      <Label layoutX="47.0" layoutY="481.0" prefHeight="27.0" prefWidth="105.0" text="Guardar en:">
+      <Label layoutX="132.0" layoutY="311.0" prefHeight="27.0" prefWidth="97.0" text="Guardar en:">
          <font>
             <Font size="18.0" />
          </font>
       </Label>
-      <TextField fx:id="txb_savePath" layoutX="47.0" layoutY="508.0" prefHeight="41.0" prefWidth="303.0">
+      <TextField fx:id="txb_savePath" layoutX="261.0" layoutY="304.0" prefHeight="41.0" prefWidth="303.0">
          <font>
             <Font size="14.0" />
          </font></TextField>
-      <Button id="btn_base_seach" fx:id="btn_baseSearch" layoutX="359.0" layoutY="324.0" mnemonicParsing="false" onAction="#buttonBaseSearch" prefHeight="41.0" prefWidth="37.0" text="...">
+      <Button id="btn_base_seach" fx:id="btn_baseSearch" layoutX="572.0" layoutY="203.0" mnemonicParsing="false" onAction="#buttonBaseSearch" prefHeight="41.0" prefWidth="37.0" text="...">
          <font>
             <Font size="14.0" />
          </font>
       </Button>
-      <Button fx:id="btn_saveSearch" layoutX="358.0" layoutY="508.0" mnemonicParsing="false" onAction="#buttonSaveSearch" prefHeight="41.0" prefWidth="37.0" text="...">
+      <Button fx:id="btn_saveSearch" layoutX="572.0" layoutY="304.0" mnemonicParsing="false" onAction="#buttonSaveSearch" prefHeight="41.0" prefWidth="37.0" text="...">
          <font>
             <Font size="14.0" />
          </font>
       </Button>
-      <Label layoutX="48.0" layoutY="657.0" prefHeight="27.0" prefWidth="182.0" text="Cantidad de Tarifas:">
+      <Label layoutX="65.0" layoutY="412.0" prefHeight="27.0" prefWidth="166.0" text="Cantidad de Tarifas:">
          <font>
             <Font size="18.0" />
          </font>
       </Label>
-      <ComboBox fx:id="cmb_amount" layoutX="47.0" layoutY="684.0" onAction="#comboBoxAmountEntered" prefHeight="41.0" prefWidth="105.0" style="-fx-font-size: 14pt;" />
-      <AnchorPane fx:id="innerAnchorPane" layoutX="477.0" layoutY="286.0" prefHeight="350.0" prefWidth="216.0" />
-      <Button fx:id="btn_generate" layoutX="47.0" layoutY="758.0" mnemonicParsing="false" onAction="#buttonGenerateClick" text="Dale Que va!!!">
+      <ComboBox fx:id="cmb_amount" layoutX="261.0" layoutY="405.0" onAction="#comboBoxAmountEntered" prefHeight="41.0" prefWidth="105.0" style="-fx-font-size: 14pt;" visibleRowCount="4" />
+      <AnchorPane fx:id="innerAnchorPaneGrid" layoutX="653.0" layoutY="231.0" prefHeight="317.0" prefWidth="281.0" />
+      <Button fx:id="btn_generate" layoutX="261.0" layoutY="456.0" mnemonicParsing="false" onAction="#buttonGenerateClick" text="Generar Tarifas!">
          <font>
             <Font size="18.0" />
          </font>
       </Button>
-      <TextField fx:id="txb_pricePath" layoutX="47.0" layoutY="420.0" prefHeight="41.0" prefWidth="303.0">
+      <TextField fx:id="txb_pricePath" layoutX="261.0" layoutY="253.0" prefHeight="41.0" prefWidth="303.0">
          <font>
             <Font size="14.0" />
          </font>
       </TextField>
-      <Label layoutX="47.0" layoutY="393.0" prefHeight="27.0" prefWidth="150.0" text="Tarifario Actual">
+      <Label layoutX="102.0" layoutY="260.0" prefHeight="27.0" prefWidth="126.0" text="Tarifario Actual:">
          <font>
             <Font size="18.0" />
          </font>
       </Label>
-      <Button id="btn_base_seach" fx:id="btn_priceSearch" layoutX="359.0" layoutY="420.0" mnemonicParsing="false" onAction="#buttonPriceSearch" prefHeight="41.0" prefWidth="37.0" text="...">
+      <Button id="btn_base_seach" fx:id="btn_priceSearch" layoutX="572.0" layoutY="253.0" mnemonicParsing="false" onAction="#buttonPriceSearch" prefHeight="41.0" prefWidth="37.0" text="...">
          <font>
             <Font size="14.0" />
          </font>
       </Button>
-      <Label layoutX="47.0" layoutY="568.0" prefHeight="27.0" prefWidth="182.0" text="Tipo de Tarifas:">
+      <Label layoutX="102.0" layoutY="362.0" prefHeight="27.0" prefWidth="126.0" text="Tipo de Tarifas:">
          <font>
             <Font size="18.0" />
          </font>
       </Label>
-      <ComboBox fx:id="cmb_type" layoutX="47.0" layoutY="595.0" onAction="#comboBoxTypeEntered" prefHeight="41.0" prefWidth="231.0" style="-fx-font-size: 14pt;" />
-      <CheckBox fx:id="chb_individuals" layoutX="242.0" layoutY="692.0" mnemonicParsing="false" selected="true" text="Crear Individuales">
+      <ComboBox fx:id="cmb_type" layoutX="261.0" layoutY="355.0" onAction="#comboBoxTypeEntered" prefHeight="41.0" prefWidth="231.0" style="-fx-font-size: 14pt;" />
+      <CheckBox fx:id="chb_individuals" layoutX="443.0" layoutY="413.0" mnemonicParsing="false" selected="true" text="Crear Individuales">
          <font>
             <Font size="17.0" />
          </font>
       </CheckBox>
+      <AnchorPane fx:id="innerAnchorPaneTitle" layoutX="702.0" layoutY="197.0" prefHeight="27.0" prefWidth="200.0" />
+      <ImageView fitHeight="191.0" fitWidth="689.0" layoutX="68.0" layoutY="6.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../images/price-tag.png" />
+         </image>
+      </ImageView>
     </children>
 </AnchorPane>

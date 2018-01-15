@@ -39,12 +39,11 @@ public class DomesticReader {
 
     public DomesticReader(File input) throws IOException {
         try {
-            System.out.println("DomesticExcelReader.");
-            System.out.println("\tReading...");
+            
             WORK_BOOK = new XSSFWorkbook(new FileInputStream(input));
-            System.out.println("\tInit - [" + CommonTime.getTime() + "]");
+            
         } catch (IOException ex) {
-            System.out.println("\tIOException!!!");
+           
             Logger.getLogger(ExpoImpoExcelReader.class.getName()).log(Level.SEVERE, null, ex);
             throw ex;
         }
@@ -58,11 +57,11 @@ public class DomesticReader {
         readBase();
         readAdders();
         try {
-            System.out.println("\tClosing...");
+            
             close();
-            System.out.println("\tFinish - [" + CommonTime.getTime() + "]");
+            
         } catch (IOException ex) {
-            System.out.println("\tIOException!!!");
+            
             Logger.getLogger(ExpoImpoExcelReader.class.getName()).log(Level.SEVERE, null, ex);
             throw ex;
         }
@@ -88,6 +87,7 @@ public class DomesticReader {
                     cell = row.createCell(j + COL_START);
                 }
                 base[i][j] = Double.parseDouble(cell.getRawValue());
+                
             }
         }
     }

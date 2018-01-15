@@ -20,8 +20,11 @@ public class ImpoExpoBuilder {
     private final double[][] DOC_BASE;
     private final double[][] NONDOC_BASE;
     private final double[] ADDERS_BASE;
-    private final double FIX;
-    private final double PORC;
+
+    private double DOC_PERCENTAGE;
+    private double NON_DOC_FIX;
+    private double NON_DOC_PERCENTAGE;
+
     private double[][] docPrice;
     private double[][] nondocPrice;
     private double[] adders;
@@ -29,13 +32,14 @@ public class ImpoExpoBuilder {
     private double[][] nondocPriceProfit;
     private double[] addersProfit;
 
-    public ImpoExpoBuilder(double[][] docBase, double[][] nondocBase, double[] adderBase, double fix, double porc) {
+    public ImpoExpoBuilder(double[][] docBase, double[][] nondocBase, double[] adderBase, double docPercentage, double nonDocFix, double nonDocPorc) {
         DOC_BASE = docBase;
         NONDOC_BASE = nondocBase;
         ADDERS_BASE = adderBase;
 
-        FIX = fix;
-        PORC = porc;
+        DOC_PERCENTAGE = docPercentage;
+        NON_DOC_FIX = nonDocFix;
+        NON_DOC_PERCENTAGE = nonDocPorc;
 
         DOC_PRICE_ROWS = docBase.length;
         NONDOC_PRICE_ROWS = nondocBase.length;
@@ -57,50 +61,49 @@ public class ImpoExpoBuilder {
     }
 
     private void buildDocPrice() {
-        double pfix = FIX;
-        double decrement = FIX / DOC_PRICE_ROWS;
 
         for (int i = 0; i < DOC_PRICE_ROWS; i++) {
             for (int j = 0; j < PRICE_COLS; j++) {
-                docPrice[i][j] = CommonMath.round(DOC_BASE[i][j] * (1 + PORC) + pfix, 2);
-            }
-
-            if (pfix <= 0) {
-                pfix = 0;
-            } else {
-                pfix -= decrement;
+                docPrice[i][j] = CommonMath.round(DOC_BASE[i][j] * (1 + DOC_PERCENTAGE), 2);
             }
         }
     }
 
     private void buildNondocPrice() {
-        double pfix = FIX;
-        double decrement = FIX / NONDOC_PRICE_ROWS;
+        int sizeOfFix = 100;
+        int endOfPointFive = 60;
+        double pfix = NON_DOC_FIX;
+        double decrement = NON_DOC_FIX / sizeOfFix;
 
         for (int i = 0; i < NONDOC_PRICE_ROWS; i++) {
             for (int j = 0; j < PRICE_COLS; j++) {
-                nondocPrice[i][j] = CommonMath.round(NONDOC_BASE[i][j] * (1 + PORC) + pfix, 2);
+                nondocPrice[i][j] = CommonMath.round(NONDOC_BASE[i][j] * (1 + NON_DOC_PERCENTAGE) + pfix, 2);
             }
 
-            if (pfix <= 0) {
+            if (i == endOfPointFive) {
+                decrement *= 2;
+            }
+
+            if (i >= sizeOfFix) {
                 pfix = 0;
             } else {
                 pfix -= decrement;
             }
+
         }
     }
 
     private void buildAdder() {
 
         for (int j = 0; j < PRICE_COLS; j++) {
-            adders[j] = CommonMath.round(ADDERS_BASE[j] * (1 + PORC), 2);
+            adders[j] = CommonMath.round(ADDERS_BASE[j] * (1 + NON_DOC_PERCENTAGE), 2);
         }
     }
 
     private void buildDocProfit() {
         for (int i = 0; i < DOC_PRICE_ROWS; i++) {
             for (int j = 0; j < PRICE_COLS; j++) {
-                docPriceProfit[i][j] = CommonMath.round(docPrice[i][j] - DOC_BASE[i][j],2);
+                docPriceProfit[i][j] = CommonMath.round(docPrice[i][j] - DOC_BASE[i][j], 2);
             }
         }
     }
@@ -108,14 +111,14 @@ public class ImpoExpoBuilder {
     private void buildNondocProfit() {
         for (int i = 0; i < NONDOC_PRICE_ROWS; i++) {
             for (int j = 0; j < PRICE_COLS; j++) {
-                nondocPriceProfit[i][j] = CommonMath.round(nondocPrice[i][j] - NONDOC_BASE[i][j],2);
+                nondocPriceProfit[i][j] = CommonMath.round(nondocPrice[i][j] - NONDOC_BASE[i][j], 2);
             }
         }
     }
 
     private void buildAddersProfit() {
         for (int j = 0; j < PRICE_COLS; j++) {
-            addersProfit[j] = CommonMath.round(adders[j] - ADDERS_BASE[j],2);
+            addersProfit[j] = CommonMath.round(adders[j] - ADDERS_BASE[j], 2);
         }
     }
 
@@ -142,6 +145,5 @@ public class ImpoExpoBuilder {
     public double[] getAddersProfit() {
         return addersProfit;
     }
-    
-    
+
 }

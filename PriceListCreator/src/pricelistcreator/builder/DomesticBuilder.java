@@ -20,18 +20,18 @@ public class DomesticBuilder {
 
     private final double[][] PRICE_BASE;
     private final double[][] ADDERS_BASE;
-    private final double FIX;
+    
     private final double PORC;
     private double[][] price;
     private double[][] adders;
     private double[][] priceProfit;
     private double[][] addersProfit;
 
-    public DomesticBuilder(double[][] base, double[][] baseAdders, double fix, double porc) {
+    public DomesticBuilder(double[][] base, double[][] baseAdders, double porc) {
 
         PRICE_BASE = base;
         ADDERS_BASE = baseAdders;
-        FIX = fix;
+        
         PORC = porc;
         PRICE_ROWS = base.length;
         PRICE_COLS = base[0].length;
@@ -51,13 +51,12 @@ public class DomesticBuilder {
     }
 
     private void buildPrice() {
-        double pfix = FIX;
-        double decrement = FIX / PRICE_ROWS;      
+       
         
         for (int i = 0; i < PRICE_ROWS; i++) {
             for (int j = 0; j < PRICE_COLS; j++) {
-                price[i][j] = CommonMath.round(PRICE_BASE[i][j] * (1 + PORC) + pfix, 2);                
-                pfix -= decrement;
+                price[i][j] = CommonMath.round(PRICE_BASE[i][j] * (1 + PORC) , 2);                
+                
             }
         }
     }

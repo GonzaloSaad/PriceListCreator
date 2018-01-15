@@ -41,26 +41,24 @@ public class ExpoImpoExcelWritter {
         try {
 
             OUTPUT_FILE = file;
-            System.out.println("ExpoImpoExcelWritter.");
-            System.out.println("\t" + file.getAbsolutePath());
-            System.out.println("\tOpening File...");
+            
             WORK_BOOK = new XSSFWorkbook(new FileInputStream(OUTPUT_FILE));
 
-            System.out.println("\tInit\t-\t[" + CommonTime.getTime() + "]");
+           
 
         } catch (FileNotFoundException ex) {
-            System.out.println("\tFileNotFoundException!!! " + ex.getMessage());
+            
             Logger.getLogger(ExpoImpoExcelWritter.class.getName()).log(Level.SEVERE, null, ex);
             throw ex;
         } catch (IOException ex) {
-            System.out.println("\tIOException!!! " + ex.getMessage());
+            
             Logger.getLogger(ExpoImpoExcelWritter.class.getName()).log(Level.SEVERE, null, ex);
             throw ex;
         }
     }
 
     public void write(double[][] docPrices, double[][] docProfit, double[][] nondocPrices, double[][] nondocProfit, double[] adders, double[] addersProfit, int worksheet) {
-        System.out.println("\tWritting...");
+        
 
         XSSFSheet sheet = WORK_BOOK.getSheetAt(worksheet);
 
@@ -160,16 +158,16 @@ public class ExpoImpoExcelWritter {
 
             FileOutputStream fileOut = new FileOutputStream(OUTPUT_FILE);
             //write this workbook to an Outputstream.
-            System.out.println("\tSaving...");
+            
             WORK_BOOK.write(fileOut);
             fileOut.flush();
-            System.out.println("\tFinish\t-\t[" + CommonTime.getTime() + "]");
+           
         } catch (FileNotFoundException ex) {
-            System.out.println("\tFileNotFoundException!!! " + ex.getMessage());
+            
             Logger.getLogger(ExpoImpoExcelWritter.class.getName()).log(Level.SEVERE, null, ex);
             throw ex;
         } catch (IOException ex) {
-            System.out.println("\tIOException!!! " + ex.getMessage());
+           
             Logger.getLogger(ExpoImpoExcelWritter.class.getName()).log(Level.SEVERE, null, ex);
             throw ex;
         }
