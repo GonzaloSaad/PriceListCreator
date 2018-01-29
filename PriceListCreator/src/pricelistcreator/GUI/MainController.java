@@ -25,8 +25,10 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -35,6 +37,7 @@ import javafx.scene.control.CheckBox;
 
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.AnchorPane;
@@ -71,6 +74,9 @@ public class MainController implements Initializable {
 
     private final String[] TYPE_VALUES = new String[]{CommonString.DOM, CommonString.EXPO, CommonString.IMPO};
     private ServiceType SERVICE_TYPE = ServiceType.DOM;
+    private FileChooser fileChooser;
+    private DirectoryChooser directoryChooser;
+    private File lastValidDirectory;
 
     @FXML
     private ComboBox<Integer> cmb_amount;
@@ -97,6 +103,10 @@ public class MainController implements Initializable {
     @FXML
     private AnchorPane innerAnchorPaneTitle;
 
+
+    /*
+    Events
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         setTypeComboBox();
@@ -123,42 +133,22 @@ public class MainController implements Initializable {
     @FXML
     private void buttonGenerateClick(ActionEvent event) {
 
-        if (readFile == null) {
-            alertBaseError("No se selecciono un archivo base.");
-        } else if (priceFile == null) {
-            alertPriceError("No se seleccino un archivo tarifa.");
-        } else if (saveFile == null) {
-            alertDirError();
-        } else {
+        if (!alertConfirmation()) {
+            return;
+        }
 
-            boolean valid = true;
+        if (inputOk()) {
+
             try {
-                FileValidator fv = new FileValidator();
-                fv.validate(readFile, priceFile, SERVICE_TYPE);
-            } catch (InvalidBaseFileException ex) {
-                alertBaseError(ex.getMessage());
-                valid = false;
 
-            } catch (InvalidPriceFileException ex) {
-                alertPriceError(ex.getMessage());
-                valid = false;
-            }
-
-            if (valid) {
-
-               
-                try {
-                    buildFiles();
-
-                    if (alertFinish()) {
-                        Desktop desktop = Desktop.getDesktop();
-                        desktop.open(lastFile);
-                    }
-
-                } catch (Exception ex) {
-                    alertUnknownError(ex.getMessage());
-                    Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+                buildFiles();
+                if (alertFinish()) {
+                    Desktop desktop = Desktop.getDesktop();
+                    desktop.open(lastFile);
                 }
+            } catch (Exception ex) {
+                alertUnknownError(ex.getMessage());
+                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -191,6 +181,9 @@ public class MainController implements Initializable {
 
     }
 
+    /*
+    Directory and File management.
+     */
     private void chooseBase() {
         File read = readFile();
 
@@ -199,6 +192,7 @@ public class MainController implements Initializable {
         }
 
         readFile = read;
+        lastValidDirectory = new File(read.getParent());
         setReadPathText(read.getAbsolutePath());
 
     }
@@ -211,6 +205,7 @@ public class MainController implements Initializable {
         }
 
         priceFile = price;
+        lastValidDirectory = new File(price.getParent());
         setPricePathText(price.getAbsolutePath());
     }
 
@@ -222,27 +217,26 @@ public class MainController implements Initializable {
         }
 
         saveFile = save;
+        lastValidDirectory = save;
         setSavePathText(save.getAbsolutePath());
     }
 
     private File readFile() {
-        FileChooser fc = new FileChooser();
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Excel files (*.xlsx)", "*.xlsx");
-        fc.getExtensionFilters().add(extFilter);
-
+        FileChooser fc = getFileChooser();
         File file = fc.showOpenDialog((Stage) anchorPane.getScene().getWindow());
         return file;
 
     }
 
     private File readDirectory() {
-        DirectoryChooser dc = new DirectoryChooser();
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Excel files (*.xlsx)", "*.xlsx");
-
+        DirectoryChooser dc = getDirectoryChooser();
         File file = dc.showDialog((Stage) anchorPane.getScene().getWindow());
         return file;
     }
 
+    /*
+    Controller's setters.
+     */
     private void setReadPathText(String path) {
         this.txb_readPath.setText(path);
     }
@@ -282,19 +276,22 @@ public class MainController implements Initializable {
         cmb_type.getSelectionModel().selectFirst();
     }
 
+    /*
+    Controllers creators.
+     */
     private void createGridPane(int elements) {
 
         Label titleLabel = new Label();
 
         if (SERVICE_TYPE == ServiceType.DOM) {
             gridPane = createDomesticGridPane(elements);
-            titleLabel.setText(CommonString.DOM);
+            titleLabel.setText("Grilla de Detalles ("+CommonString.DOM+")");
         } else {
             gridPane = createImpoExpoGridPane(elements);
             if (SERVICE_TYPE == ServiceType.IMPO) {
-                titleLabel.setText(CommonString.IMPO);
+                titleLabel.setText("Grilla de Detalles ("+CommonString.IMPO+")");
             } else {
-                titleLabel.setText(CommonString.EXPO);
+                titleLabel.setText("Grilla de Detalles ("+CommonString.EXPO+")");
             }
 
         }
@@ -420,6 +417,27 @@ public class MainController implements Initializable {
         return gp;
     }
 
+    private FileChooser getFileChooser() {
+        if (fileChooser == null) {
+            fileChooser = new FileChooser();
+            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Excel files (*.xlsx)", "*.xlsx");
+            fileChooser.getExtensionFilters().add(extFilter);
+        }
+        fileChooser.setInitialDirectory(lastValidDirectory);
+        return fileChooser;
+    }
+
+    private DirectoryChooser getDirectoryChooser() {
+        if (directoryChooser == null) {
+            directoryChooser = new DirectoryChooser();
+        }
+        directoryChooser.setInitialDirectory(lastValidDirectory);
+        return directoryChooser;
+    }
+
+    /*
+    Files builders.
+     */
     private void buildFiles() throws IOException {
         if (SERVICE_TYPE == ServiceType.DOM) {
             buildDomesticFiles();
@@ -450,12 +468,14 @@ public class MainController implements Initializable {
          */
         DirectoryCreator dc = new DirectoryCreator(saveFile, priceFile, cant, chb_individuals.isSelected(), SERVICE_TYPE);
         lastFile = dc.getOuputDir();
+
         /**
          * Create files.
          */
         DomesticOutputCreator domC = new DomesticOutputCreator();
         domC.setCreator(readFile, dc.getDestinyFile(), dc.getOuputDir(), percentages);
         domC.write(chb_individuals.isSelected());
+
     }
 
     private void buildExpoImpoFiles() throws IOException {
@@ -491,18 +511,27 @@ public class MainController implements Initializable {
          */
         DirectoryCreator dc = new DirectoryCreator(saveFile, priceFile, cant, chb_individuals.isSelected(), SERVICE_TYPE);
         lastFile = dc.getOuputDir();
+
         /**
          * Create files.
          */
         ImpoExpoOutputCreator oc = new ImpoExpoOutputCreator();
         oc.setCreator(readFile, dc.getDestinyFile(), dc.getOuputDir(), dpercentages, ndfixes, ndpercentages);
         oc.write(chb_individuals.isSelected());
+
     }
 
+    /*
+    Alerts
+     */
     private void alertError(String msg, String header) {
         Alert a = new Alert(AlertType.ERROR, msg, ButtonType.OK);
         a.setHeaderText(header);
         a.showAndWait();
+    }
+
+    private void alertGridError() {
+        alertError("Debe completar la Grilla de Detalles.", "Error en la grilla.");
     }
 
     private void alertBaseError(String msg) {
@@ -524,7 +553,7 @@ public class MainController implements Initializable {
     private boolean alertFinish() {
 
         Alert a = new Alert(Alert.AlertType.INFORMATION,
-                "Las tarifas fueron creadas en la carpeta '"+lastFile.getName()+"'.\n¿Desea abrir la carpeta donde fueron creadas?",
+                "Las tarifas fueron creadas en la carpeta '" + lastFile.getName() + "'.\n¿Desea abrir la carpeta donde fueron creadas?",
                 ButtonType.YES,
                 ButtonType.NO);
 
@@ -532,6 +561,115 @@ public class MainController implements Initializable {
 
         Optional<ButtonType> result = a.showAndWait();
         return result.get() == ButtonType.YES;
+    }
+
+    private boolean alertConfirmation() {
+        Alert a = new Alert(AlertType.CONFIRMATION, "¿Esta seguro que quiere generar las tarifas?", ButtonType.YES, ButtonType.NO);
+        a.setHeaderText("Confirmacion de Guardado");
+        Optional<ButtonType> result = a.showAndWait();
+        return result.get() == ButtonType.YES;
+    }
+
+    /*
+    Validations
+     */
+    private boolean inputOk() {
+
+        if (filesSelected()) {
+
+            /**
+             * Check if grid is complete.
+             */
+            if (!validateGrid()) {
+                alertGridError();
+                return false;
+            }
+
+            /**
+             * Check if files are valid.
+             */
+            try {
+                FileValidator fv = new FileValidator();
+                fv.validate(readFile, priceFile, SERVICE_TYPE);
+            } catch (InvalidBaseFileException ex) {
+                alertBaseError(ex.getMessage());
+                return false;
+
+            } catch (InvalidPriceFileException ex) {
+                alertPriceError(ex.getMessage());
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private boolean filesSelected() {
+        if (readFile == null) {
+            alertBaseError("No se selecciono un archivo base.");
+            return false;
+        } else if (priceFile == null) {
+            alertPriceError("No se seleccino un archivo tarifa.");
+            return false;
+        } else if (saveFile == null) {
+            alertDirError();
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private boolean validateGrid() {
+        if (SERVICE_TYPE == ServiceType.DOM) {
+            return validateDomesticGrid();
+        } else {
+            return validateExpoImpoGrid();
+        }
+    }
+
+    private boolean validateDomesticGrid() {
+        int cant = cmb_amount.getValue();
+        final int PER_COL = 1;
+        final int COL_COUNT = 2;
+
+        TextField tp;
+
+        for (int i = 0; i < cant; i++) {
+
+            tp = (TextField) gridPane.getChildren().get((i + 1) * COL_COUNT + PER_COL);
+            if (tp.getText().trim().isEmpty()) {
+                return false;
+            }
+
+        }
+        return true;
+    }
+
+    private boolean validateExpoImpoGrid() {
+        int cant = cmb_amount.getValue();
+        final int DPER = 1;
+        final int NDFIX_COL = 2;
+        final int NDPER_COL = 3;
+        final int COL_COUNT = 4;
+
+        for (int i = 0; i < cant; i++) {
+
+            TextField dp = (TextField) gridPane.getChildren().get((i + 1) * COL_COUNT + DPER);
+            if (dp.getText().trim().isEmpty()) {
+                return false;
+            }
+
+            TextField ndf = (TextField) gridPane.getChildren().get((i + 1) * COL_COUNT + NDFIX_COL);
+            if (ndf.getText().trim().isEmpty()) {
+                return false;
+            }
+
+            TextField ndp = (TextField) gridPane.getChildren().get((i + 1) * COL_COUNT + NDPER_COL);
+            if (ndp.getText().trim().isEmpty()) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

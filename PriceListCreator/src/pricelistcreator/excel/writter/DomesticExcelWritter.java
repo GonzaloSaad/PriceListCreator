@@ -10,12 +10,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import pricelistcreator.common.CommonMath;
 import pricelistcreator.common.CommonString;
 import pricelistcreator.common.CommonTime;
 
@@ -35,6 +37,9 @@ public class DomesticExcelWritter {
     private final int PRICE_COL = 1;
     private final int COURIER_COL = 4;
 
+    private final int PARAMETERS_ROW = 1;
+    private final int PARAMETERS_COL = 0;
+
     private final XSSFWorkbook WORK_BOOK;
 
     public DomesticExcelWritter(File file) throws FileNotFoundException, IOException {
@@ -42,19 +47,14 @@ public class DomesticExcelWritter {
         OUTPUT_FILE = file;
         try {
 
-            System.out.println("DomesticExcelWritter.");
-            System.out.println("\t" + file.getAbsolutePath());
-            System.out.println("\tOpening File...");
             WORK_BOOK = new XSSFWorkbook(new FileInputStream(OUTPUT_FILE));
 
-            System.out.println("\tInit\t-\t[" + CommonTime.getTime() + "]");
-
         } catch (FileNotFoundException ex) {
-            System.out.println("\tFileNotFoundException!!! " + ex.getMessage());
+
             Logger.getLogger(ExpoImpoExcelWritter.class.getName()).log(Level.SEVERE, null, ex);
             throw ex;
         } catch (IOException ex) {
-            System.out.println("\tIOException!!! " + ex.getMessage());
+
             Logger.getLogger(ExpoImpoExcelWritter.class.getName()).log(Level.SEVERE, null, ex);
             throw ex;
         }
@@ -142,16 +142,15 @@ public class DomesticExcelWritter {
 
             FileOutputStream fileOut = new FileOutputStream(OUTPUT_FILE);
 
-            System.out.println("\tSaving...");
             WORK_BOOK.write(fileOut);
             fileOut.flush();
-            System.out.println("\tFinish\t-\t[" + CommonTime.getTime() + "]");
+
         } catch (FileNotFoundException ex) {
-            System.out.println("\tFileNotFoundException!!! " + ex.getMessage());
+
             Logger.getLogger(ExpoImpoExcelWritter.class.getName()).log(Level.SEVERE, null, ex);
             throw ex;
         } catch (IOException ex) {
-            System.out.println("\tIOException!!! " + ex.getMessage());
+
             Logger.getLogger(ExpoImpoExcelWritter.class.getName()).log(Level.SEVERE, null, ex);
             throw ex;
         }
@@ -264,4 +263,64 @@ public class DomesticExcelWritter {
 
     }
 
+    public void writeParameters(double[] percentages, File dir) throws FileNotFoundException, IOException {
+        XSSFWorkbook wb;
+        File outputFile = new File(dir.getAbsoluteFile() + "\\Parametros de Tarifa.xlsx");
+        try {
+
+            wb = new XSSFWorkbook(new FileInputStream(outputFile));
+
+        } catch (FileNotFoundException ex) {
+
+            Logger.getLogger(ExpoImpoExcelWritter.class.getName()).log(Level.SEVERE, null, ex);
+            throw ex;
+        } catch (IOException ex) {
+
+            Logger.getLogger(ExpoImpoExcelWritter.class.getName()).log(Level.SEVERE, null, ex);
+            throw ex;
+        }
+        wb.setSheetName(0, "Parametros");
+        XSSFSheet sheet = wb.getSheetAt(0);
+        XSSFRow row;
+
+        for (int i = 0; i < percentages.length; i++) {
+            row = sheet.getRow(i + PARAMETERS_ROW);
+            if (row == null) {
+                row = sheet.createRow(i + PARAMETERS_ROW);
+            }
+            XSSFCell cellTitle = row.getCell(PARAMETERS_COL);
+
+            if (cellTitle == null) {
+                cellTitle = row.createCell(PARAMETERS_COL);
+            }
+
+            XSSFCell cellPerc = row.getCell(PARAMETERS_COL + 1);
+
+            if (cellPerc == null) {
+                cellPerc = row.createCell(PARAMETERS_COL + 1);
+            }
+
+            
+            cellTitle.setCellValue("Tarifa " + (i + 1));
+            cellPerc.setCellValue(CommonMath.round(percentages[i]*100,2));
+
+        }
+
+        try {
+
+            FileOutputStream fileOut = new FileOutputStream(outputFile);
+
+            wb.write(fileOut);
+            fileOut.flush();
+
+        } catch (FileNotFoundException ex) {
+
+            Logger.getLogger(ExpoImpoExcelWritter.class.getName()).log(Level.SEVERE, null, ex);
+            throw ex;
+        } catch (IOException ex) {
+
+            Logger.getLogger(ExpoImpoExcelWritter.class.getName()).log(Level.SEVERE, null, ex);
+            throw ex;
+        }
+    }
 }

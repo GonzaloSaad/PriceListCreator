@@ -59,6 +59,7 @@ public class DomesticOutputCreator  {
             if (individuals){
                 dew.writeIndividual(price, adder, i+1, BASE_FOLDER);
             }
+            dew.writeParameters(PERCENTAGES, BASE_FOLDER);
             
         }
         dew.closeAndSave();

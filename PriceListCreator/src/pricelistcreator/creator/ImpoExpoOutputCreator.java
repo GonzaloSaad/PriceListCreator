@@ -61,6 +61,7 @@ public class ImpoExpoOutputCreator  {
             if (individuals) {
                 eiw.writeIndividual(docPrice, nonDocPrice, adder, i + 1, BASE_FOLDER);
             }
+            eiw.writeParameters(DOC_PERCENTAGES,NON_DOC_FIXS, NON_DOC_PERCENTAGES, BASE_FOLDER);
         }
         eiw.closeAndSave();
 
